@@ -1,5 +1,5 @@
 const API_URL =
-    "https://script.google.com/macros/s/AKfycbxLIOYrflq8i773dkZl0Tpo-_lK9lLjID31ujjUT9vCc3TEhJJVNO4vDmcOwafcfmDemA/exec";
+    "https://script.google.com/macros/s/AKfycbx0pzJ9h6asb8jWflwZX8Sy1UmOBJcreQMJ9n_260jyqasZOacXZMBe-6m4zGGbVlZvwA/exec";
 
 
 const form = document.getElementById("gpsForm");
