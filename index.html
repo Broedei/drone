@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="nl">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>GPS Registratie</title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>GPS Registratie</h1>
+
+        <p>
+            Vul je gegevens in. Bij het versturen wordt je locatie,
+            datum en tijd geregistreerd.
+        </p>
+
+
+        <form id="gpsForm">
+
+            <label for="naam">
+                Naam
+            </label>
+
+            <input
+                type="text"
+                id="naam"
+                name="naam"
+                required
+            >
+
+
+            <label for="opmerkingen">
+                Opmerkingen
+            </label>
+
+            <textarea
+                id="opmerkingen"
+                name="opmerkingen"
+                rows="5"
+            ></textarea>
+
+
+            <button type="submit">
+                Versturen en locatie opslaan
+            </button>
+
+        </form>
+
+
+        <div id="status"></div>
+
+    </div>
+
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
