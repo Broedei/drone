@@ -1,5 +1,6 @@
+
 const API_URL =
-    "https://script.google.com/macros/s/AKfycbwh9SrPP-vuoUV7boF9Wbmtxk81EJa7HmxB01_btbKRZbxzvD_uHh4OHDmfxqv7rOFo/exec";
+   https://script.google.com/macros/s/AKfycbwh9SrPP-vuoUV7boF9Wbmtxk81EJa7HmxB01_btbKRZbxzvD_uHh4OHDmfxqv7rOFo/exec;
 
 
 const form = document.getElementById("gpsForm");
@@ -32,8 +33,9 @@ form.addEventListener("submit", function(event) {
     button.disabled = true;
     button.textContent = "Locatie ophalen...";
 
+
     showStatus(
-        "GPS-locatie wordt opgehaald...",
+        "Je GPS-locatie wordt opgehaald...",
         "loading"
     );
 
@@ -67,6 +69,7 @@ form.addEventListener("submit", function(event) {
         function(error) {
 
             button.disabled = false;
+
             button.textContent =
                 "Versturen en locatie opslaan";
 
@@ -76,16 +79,21 @@ form.addEventListener("submit", function(event) {
 
 
             if (error.code === 1) {
+
                 message =
                     "Je hebt geen toestemming gegeven voor je locatie.";
             }
 
+
             if (error.code === 2) {
+
                 message =
                     "Je locatie is momenteel niet beschikbaar.";
             }
 
+
             if (error.code === 3) {
+
                 message =
                     "Het ophalen van je locatie duurde te lang.";
             }
@@ -125,6 +133,7 @@ function sendData(
         latitude: latitude,
 
         longitude: longitude
+
     };
 
 
@@ -143,8 +152,9 @@ function sendData(
     .then(function(response) {
 
         if (!response.ok) {
+
             throw new Error(
-                "Server gaf foutcode: " +
+                "Serverfout: " +
                 response.status
             );
         }
@@ -155,15 +165,22 @@ function sendData(
 
     .then(function(result) {
 
-        console.log("Server antwoord:", result);
+        console.log(
+            "Antwoord van Google:",
+            result
+        );
 
 
         let responseData;
 
+
         try {
+
             responseData =
                 JSON.parse(result);
+
         } catch (e) {
+
             responseData = null;
         }
 
@@ -196,10 +213,11 @@ function sendData(
 
     })
 
+
     .catch(function(error) {
 
         console.error(
-            "Fout bij versturen:",
+            "Fout:",
             error
         );
 
@@ -216,6 +234,7 @@ function sendData(
         button.textContent =
             "Versturen en locatie opslaan";
     });
+
 }
 
 
@@ -224,7 +243,8 @@ function showStatus(
     type
 ) {
 
-    statusBox.textContent = message;
+    statusBox.textContent =
+        message;
 
     statusBox.className = "";
 
