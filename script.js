@@ -1,5 +1,5 @@
 const API_URL =
-    "https://script.google.com/macros/s/AKfycbwh9SrPP-vuoUV7boF9Wbmtxk81EJa7HmxB01_btbKRZbxzvD_uHh4OHDmfxqv7rOFo/exec";
+    "https://script.google.com/macros/s/AKfycby1dLNaI_Hx-Px4ja8LB0ShDema6aJ2_UVR3FdDQQ7ahbZJ-7SBqnf7DSDEWgHEUufPBw/exec";
 
 
 const form = document.getElementById("gpsForm");
@@ -287,4 +287,17 @@ function showStatus(
         "";
 
     statusBox.classList.add(type);
+}
+function testAdres() {
+
+  const latitude = 52.6256;
+  const longitude = 6.6309;
+
+  const adres =
+    getAddress(
+      latitude,
+      longitude
+    );
+
+  Logger.log(adres);
 }
