@@ -1,7 +1,7 @@
 // PLAK HIER DE URL VAN JOUW GOOGLE APPS SCRIPT WEB APP
 
 const API_URL =
-    "PLAK_HIER_JOUW_APPS_SCRIPT_URL";
+    "https://script.google.com/macros/s/AKfycbwh9SrPP-vuoUV7boF9Wbmtxk81EJa7HmxB01_btbKRZbxzvD_uHh4OHDmfxqv7rOFo/exec";
 
 
 const form = document.getElementById("gpsForm");
