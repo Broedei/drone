@@ -1,33 +1,23 @@
-// PLAK HIER DE URL VAN JOUW GOOGLE APPS SCRIPT WEB APP
-
 const API_URL =
     "https://script.google.com/macros/s/AKfycbwh9SrPP-vuoUV7boF9Wbmtxk81EJa7HmxB01_btbKRZbxzvD_uHh4OHDmfxqv7rOFo/exec";
 
 
 const form = document.getElementById("gpsForm");
-
 const statusBox = document.getElementById("status");
-
 const button = form.querySelector("button");
-
 
 
 form.addEventListener("submit", function(event) {
 
     event.preventDefault();
 
-
-    // Naam ophalen
     const naam =
-        document.getElementById("naam").value;
+        document.getElementById("naam").value.trim();
 
-
-    // Opmerkingen ophalen
     const opmerkingen =
-        document.getElementById("opmerkingen").value;
+        document.getElementById("opmerkingen").value.trim();
 
 
-    // Controleren of GPS beschikbaar is
     if (!navigator.geolocation) {
 
         showStatus(
@@ -39,20 +29,15 @@ form.addEventListener("submit", function(event) {
     }
 
 
-    // Knop tijdelijk uitschakelen
     button.disabled = true;
-
-    button.textContent =
-        "Locatie ophalen...";
-
+    button.textContent = "Locatie ophalen...";
 
     showStatus(
-        "Je GPS-locatie wordt opgehaald...",
+        "GPS-locatie wordt opgehaald...",
         "loading"
     );
 
 
-    // GPS locatie ophalen
     navigator.geolocation.getCurrentPosition(
 
         function(position) {
@@ -64,53 +49,45 @@ form.addEventListener("submit", function(event) {
                 position.coords.longitude;
 
 
+            showStatus(
+                "Locatie gevonden. Gegevens worden opgeslagen...",
+                "loading"
+            );
+
+
             sendData(
                 naam,
                 opmerkingen,
                 latitude,
                 longitude
             );
-
         },
 
 
         function(error) {
 
             button.disabled = false;
-
             button.textContent =
                 "Versturen en locatie opslaan";
 
 
             let message =
-                "Locatie kon niet worden opgehaald.";
+                "De locatie kon niet worden opgehaald.";
 
 
-            switch (error.code) {
+            if (error.code === 1) {
+                message =
+                    "Je hebt geen toestemming gegeven voor je locatie.";
+            }
 
-                case error.PERMISSION_DENIED:
+            if (error.code === 2) {
+                message =
+                    "Je locatie is momenteel niet beschikbaar.";
+            }
 
-                    message =
-                        "Je hebt geen toestemming gegeven voor locatiegebruik.";
-
-                    break;
-
-
-                case error.POSITION_UNAVAILABLE:
-
-                    message =
-                        "GPS-locatie is momenteel niet beschikbaar.";
-
-                    break;
-
-
-                case error.TIMEOUT:
-
-                    message =
-                        "Het ophalen van de GPS-locatie duurde te lang.";
-
-                    break;
-
+            if (error.code === 3) {
+                message =
+                    "Het ophalen van je locatie duurde te lang.";
             }
 
 
@@ -118,8 +95,8 @@ form.addEventListener("submit", function(event) {
                 message,
                 "error"
             );
-
         },
+
 
         {
             enableHighAccuracy: true,
@@ -132,18 +109,12 @@ form.addEventListener("submit", function(event) {
 });
 
 
-
 function sendData(
     naam,
     opmerkingen,
     latitude,
     longitude
 ) {
-
-
-    button.textContent =
-        "Gegevens versturen...";
-
 
     const data = {
 
@@ -154,7 +125,6 @@ function sendData(
         latitude: latitude,
 
         longitude: longitude
-
     };
 
 
@@ -162,17 +132,53 @@ function sendData(
 
         method: "POST",
 
-        mode: "no-cors",
-
         headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "text/plain;charset=utf-8"
         },
 
         body: JSON.stringify(data)
 
     })
 
-    .then(function() {
+    .then(function(response) {
+
+        if (!response.ok) {
+            throw new Error(
+                "Server gaf foutcode: " +
+                response.status
+            );
+        }
+
+        return response.text();
+
+    })
+
+    .then(function(result) {
+
+        console.log("Server antwoord:", result);
+
+
+        let responseData;
+
+        try {
+            responseData =
+                JSON.parse(result);
+        } catch (e) {
+            responseData = null;
+        }
+
+
+        if (
+            responseData &&
+            responseData.success === false
+        ) {
+
+            throw new Error(
+                responseData.message ||
+                "Google Apps Script gaf een fout."
+            );
+        }
+
 
         showStatus(
             "Gegevens zijn succesvol opgeslagen.",
@@ -192,11 +198,15 @@ function sendData(
 
     .catch(function(error) {
 
-        console.error(error);
+        console.error(
+            "Fout bij versturen:",
+            error
+        );
 
 
         showStatus(
-            "Er is een fout opgetreden bij het versturen.",
+            "Fout bij opslaan: " +
+            error.message,
             "error"
         );
 
@@ -205,11 +215,8 @@ function sendData(
 
         button.textContent =
             "Versturen en locatie opslaan";
-
     });
-
 }
-
 
 
 function showStatus(
@@ -219,10 +226,7 @@ function showStatus(
 
     statusBox.textContent = message;
 
-
     statusBox.className = "";
 
-
     statusBox.classList.add(type);
-
 }
