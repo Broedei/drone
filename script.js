@@ -288,16 +288,3 @@ function showStatus(
 
     statusBox.classList.add(type);
 }
-function testAdres() {
-
-  const latitude = 52.6256;
-  const longitude = 6.6309;
-
-  const adres =
-    getAddress(
-      latitude,
-      longitude
-    );
-
-  Logger.log(adres);
-}
