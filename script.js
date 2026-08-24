@@ -1,290 +1,485 @@
+/*
+========================================================
+  GOOGLE APPS SCRIPT URL
+========================================================
+
+  PLAK HIER JE BESTAANDE /exec URL
+
+*/
+
 const API_URL =
     "https://script.google.com/macros/s/AKfycbx0pzJ9h6asb8jWflwZX8Sy1UmOBJcreQMJ9n_260jyqasZOacXZMBe-6m4zGGbVlZvwA/exec";
 
 
-const form = document.getElementById("gpsForm");
-const statusBox = document.getElementById("status");
-const button = form.querySelector("button");
+/*
+========================================================
+  ELEMENTEN
+========================================================
+*/
 
-
-form.addEventListener("submit", function(event) {
-
-    event.preventDefault();
-
-
-    const naam =
-        document.getElementById("naam").value.trim();
-
-    const opmerkingen =
-        document.getElementById("opmerkingen").value.trim();
-
-
-    if (naam === "") {
-
-        showStatus(
-            "Vul eerst je naam in.",
-            "error"
-        );
-
-        return;
-    }
-
-
-    if (!navigator.geolocation) {
-
-        showStatus(
-            "GPS wordt niet ondersteund door deze browser.",
-            "error"
-        );
-
-        return;
-    }
-
-
-    button.disabled = true;
-
-    button.textContent =
-        "Locatie ophalen...";
-
-
-    showStatus(
-        "Je GPS-locatie wordt opgehaald...",
-        "loading"
+const form =
+    document.getElementById(
+        "gpsForm"
     );
 
 
-    navigator.geolocation.getCurrentPosition(
-
-        function(position) {
-
-            const latitude =
-                position.coords.latitude;
-
-            const longitude =
-                position.coords.longitude;
-
-
-            console.log(
-                "GPS:",
-                latitude,
-                longitude
-            );
-
-
-            showStatus(
-                "Locatie gevonden. Gegevens worden opgeslagen...",
-                "loading"
-            );
-
-
-            sendData(
-                naam,
-                opmerkingen,
-                latitude,
-                longitude
-            );
-
-        },
-
-
-        function(error) {
-
-            button.disabled = false;
-
-            button.textContent =
-                "Versturen en locatie opslaan";
-
-
-            let message =
-                "De locatie kon niet worden opgehaald.";
-
-
-            if (error.code === 1) {
-
-                message =
-                    "Je hebt geen toestemming gegeven voor locatiegebruik.";
-            }
-
-
-            if (error.code === 2) {
-
-                message =
-                    "De locatie is momenteel niet beschikbaar.";
-            }
-
-
-            if (error.code === 3) {
-
-                message =
-                    "Het ophalen van de locatie duurde te lang.";
-            }
-
-
-            showStatus(
-                message,
-                "error"
-            );
-        },
-
-
-        {
-            enableHighAccuracy: true,
-            timeout: 30000,
-            maximumAge: 0
-        }
-
-    );
-
-});
-
-
-function sendData(
-    naam,
-    opmerkingen,
-    latitude,
-    longitude
-) {
-
-    const data = {
-
-        naam: naam,
-
-        opmerkingen: opmerkingen,
-
-        latitude: latitude,
-
-        longitude: longitude
-
-    };
-
-
-    console.log(
-        "Versturen:",
-        data
+const status =
+    document.getElementById(
+        "status"
     );
 
 
-    fetch(API_URL, {
-
-        method: "POST",
-
-        headers: {
-            "Content-Type": "text/plain;charset=utf-8"
-        },
-
-        body: JSON.stringify(data)
-
-    })
+const gpsInfo =
+    document.getElementById(
+        "gpsInfo"
+    );
 
 
-    .then(function(response) {
-
-        console.log(
-            "HTTP status:",
-            response.status
-        );
+const submitButton =
+    document.getElementById(
+        "submitButton"
+    );
 
 
-        if (!response.ok) {
+/*
+========================================================
+  FORMULIER VERSTUREN
+========================================================
+*/
 
-            throw new Error(
-                "Serverfout: " +
-                response.status
-            );
+form.addEventListener(
+    "submit",
+    function(event) {
+
+
+        /*
+        ----------------------------------------
+        Normale formulieractie stoppen
+        ----------------------------------------
+        */
+
+        event.preventDefault();
+
+
+        /*
+        ----------------------------------------
+        Gegevens uitlezen
+        ----------------------------------------
+        */
+
+        const naam =
+            document
+                .getElementById("naam")
+                .value
+                .trim();
+
+
+        const opmerkingen =
+            document
+                .getElementById("opmerkingen")
+                .value
+                .trim();
+
+
+        const typeRegistratie =
+            document
+                .getElementById(
+                    "typeRegistratie"
+                )
+                .value;
+
+
+        /*
+        ----------------------------------------
+        Controle type
+        ----------------------------------------
+        */
+
+        if (!typeRegistratie) {
+
+            status.textContent =
+                "Kies eerst een type registratie.";
+
+            return;
+
         }
 
 
-        return response.text();
+        /*
+        ----------------------------------------
+        Controle naam
+        ----------------------------------------
+        */
 
-    })
+        if (!naam) {
 
+            status.textContent =
+                "Vul eerst je naam in.";
 
-    .then(function(result) {
+            return;
 
-        console.log(
-            "Antwoord Google Apps Script:",
-            result
-        );
-
-
-        let responseData;
-
-
-        try {
-
-            responseData =
-                JSON.parse(result);
-
-        } catch (error) {
-
-            responseData = null;
         }
 
+
+        /*
+        ----------------------------------------
+        GPS beschikbaar?
+        ----------------------------------------
+        */
 
         if (
-            responseData &&
-            responseData.success === false
+            !navigator.geolocation
         ) {
 
-            throw new Error(
-                responseData.message ||
-                "Google Apps Script gaf een fout."
-            );
+            status.textContent =
+                "GPS wordt niet ondersteund door deze telefoon.";
+
+            return;
+
         }
 
 
-        showStatus(
-            "✓ Gegevens zijn succesvol opgeslagen.",
-            "success"
+        /*
+        ----------------------------------------
+        Interface aanpassen
+        ----------------------------------------
+        */
+
+        submitButton.disabled =
+            true;
+
+
+        status.textContent =
+            "📍 Locatie wordt bepaald...";
+
+
+        gpsInfo.textContent =
+            "";
+
+
+        /*
+        ----------------------------------------
+        GPS OPHALEN
+        ----------------------------------------
+        */
+
+        navigator.geolocation.getCurrentPosition(
+
+            function(position) {
+
+
+                /*
+                ========================================
+                  GPS RESULTAAT
+                ========================================
+                */
+
+                const latitude =
+                    position.coords.latitude;
+
+
+                const longitude =
+                    position.coords.longitude;
+
+
+                const accuracy =
+                    position.coords.accuracy;
+
+
+                /*
+                ----------------------------------------
+                Nauwkeurigheid afronden
+                ----------------------------------------
+                */
+
+                const accuracyRounded =
+                    Math.round(
+                        accuracy
+                    );
+
+
+                /*
+                ----------------------------------------
+                GPS informatie tonen
+                ----------------------------------------
+                */
+
+                gpsInfo.textContent =
+                    "📍 Locatie gevonden\n" +
+                    "Nauwkeurigheid: " +
+                    accuracyRounded +
+                    " meter";
+
+
+                status.textContent =
+                    "Locatie gevonden. Gegevens worden opgeslagen...";
+
+
+                /*
+                ========================================
+                  GEGEVENS SAMENSTELLEN
+                ========================================
+                */
+
+                const gegevens = {
+
+
+                    naam:
+                        naam,
+
+
+                    opmerkingen:
+                        opmerkingen,
+
+
+                    typeRegistratie:
+                        typeRegistratie,
+
+
+                    latitude:
+                        latitude,
+
+
+                    longitude:
+                        longitude,
+
+
+                    accuracy:
+                        accuracyRounded
+
+                };
+
+
+                /*
+                ========================================
+                  NAAR GOOGLE APPS SCRIPT
+                ========================================
+                */
+
+                fetch(
+
+                    API_URL,
+
+                    {
+
+                        method:
+                            "POST",
+
+
+                        headers: {
+
+                            "Content-Type":
+                                "text/plain;charset=utf-8"
+
+                        },
+
+
+                        body:
+                            JSON.stringify(
+                                gegevens
+                            )
+
+                    }
+
+                )
+
+
+                /*
+                ----------------------------------------
+                Antwoord ontvangen
+                ----------------------------------------
+                */
+
+                .then(
+                    function(response) {
+
+                        return response.text();
+
+                    }
+                )
+
+
+                .then(
+                    function(result) {
+
+
+                        console.log(
+                            "Server antwoord:",
+                            result
+                        );
+
+
+                        /*
+                        --------------------------------
+                        Succes
+                        --------------------------------
+                        */
+
+                        status.textContent =
+                            "✅ Registratie succesvol opgeslagen.";
+
+
+                        /*
+                        --------------------------------
+                        Formulier leegmaken
+                        --------------------------------
+                        */
+
+                        form.reset();
+
+
+                        /*
+                        --------------------------------
+                        Knop opnieuw activeren
+                        --------------------------------
+                        */
+
+                        submitButton.disabled =
+                            false;
+
+                    }
+                )
+
+
+                /*
+                ----------------------------------------
+                Fout bij verzenden
+                ----------------------------------------
+                */
+
+                .catch(
+                    function(error) {
+
+
+                        console.error(
+                            error
+                        );
+
+
+                        status.textContent =
+                            "❌ De gegevens konden niet worden opgeslagen.";
+
+
+                        submitButton.disabled =
+                            false;
+
+                    }
+                );
+
+            },
+
+
+            /*
+            ========================================
+              GPS FOUT
+            ========================================
+            */
+
+            function(error) {
+
+
+                console.error(
+                    "GPS fout:",
+                    error
+                );
+
+
+                let melding =
+                    "❌ Locatie kon niet worden bepaald.";
+
+
+                /*
+                ----------------------------------------
+                Toestemming geweigerd
+                ----------------------------------------
+                */
+
+                if (
+                    error.code === 1
+                ) {
+
+                    melding =
+                        "❌ Locatietoestemming is geweigerd. Geef deze website toestemming om je locatie te gebruiken.";
+
+                }
+
+
+                /*
+                ----------------------------------------
+                Locatie niet beschikbaar
+                ----------------------------------------
+                */
+
+                if (
+                    error.code === 2
+                ) {
+
+                    melding =
+                        "❌ Je locatie kon niet worden bepaald. Controleer of GPS/locatievoorzieningen aan staan.";
+
+                }
+
+
+                /*
+                ----------------------------------------
+                Timeout
+                ----------------------------------------
+                */
+
+                if (
+                    error.code === 3
+                ) {
+
+                    melding =
+                        "❌ Het bepalen van je locatie duurde te lang. Probeer opnieuw.";
+
+                }
+
+
+                status.textContent =
+                    melding;
+
+
+                submitButton.disabled =
+                    false;
+
+            },
+
+
+            /*
+            ========================================
+              GPS OPTIES
+            ========================================
+            */
+
+            {
+
+                /*
+                Zo nauwkeurig mogelijk
+                */
+
+                enableHighAccuracy:
+                    true,
+
+
+                /*
+                Maximaal 20 seconden wachten
+                */
+
+                timeout:
+                    20000,
+
+
+                /*
+                Geen oude GPS-positie gebruiken
+                */
+
+                maximumAge:
+                    0
+
+            }
+
         );
 
-
-        form.reset();
-
-
-        button.disabled = false;
-
-        button.textContent =
-            "Versturen en locatie opslaan";
-
-    })
-
-
-    .catch(function(error) {
-
-        console.error(
-            "Verzendfout:",
-            error
-        );
-
-
-        showStatus(
-            "Fout bij opslaan: " +
-            error.message,
-            "error"
-        );
-
-
-        button.disabled = false;
-
-        button.textContent =
-            "Versturen en locatie opslaan";
-
-    });
-
-}
-
-
-function showStatus(
-    message,
-    type
-) {
-
-    statusBox.textContent =
-        message;
-
-    statusBox.className =
-        "";
-
-    statusBox.classList.add(type);
-}
+    }
+);
