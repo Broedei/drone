@@ -12,60 +12,141 @@
 
     <title>GPS Registratie</title>
 
-    <link rel="stylesheet" href="style.css">
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
 
 </head>
 
+
 <body>
 
-    <div class="container">
 
-        <h1>GPS Registratie</h1>
-
-        <p>
-            Vul je gegevens in. Bij het versturen wordt je locatie,
-            datum en tijd geregistreerd.
-        </p>
+<div class="container">
 
 
-        <form id="gpsForm">
-
-            <label for="naam">
-                Naam
-            </label>
-
-            <input
-                type="text"
-                id="naam"
-                name="naam"
-                required
-            >
+    <h1>GPS Registratie</h1>
 
 
-            <label for="opmerkingen">
-                Opmerkingen
-            </label>
-
-            <textarea
-                id="opmerkingen"
-                name="opmerkingen"
-                rows="5"
-            ></textarea>
+    <p>
+        Vul de gegevens in.
+        Bij het versturen wordt je GPS-locatie bepaald.
+    </p>
 
 
-            <button type="submit">
-                Versturen en locatie opslaan
-            </button>
-
-        </form>
+    <form id="gpsForm">
 
 
-        <div id="status"></div>
+        <!-- TYPE REGISTRATIE -->
 
-    </div>
+        <label for="typeRegistratie">
+            Type registratie
+        </label>
 
 
-    <script src="script.js"></script>
+        <select
+            id="typeRegistratie"
+            name="typeRegistratie"
+            required
+        >
+
+            <option value="">
+                Kies een type
+            </option>
+
+
+            <option value="Controle">
+                Controle
+            </option>
+
+
+            <option value="Bezoek">
+                Bezoek
+            </option>
+
+
+            <option value="Inspectie">
+                Inspectie
+            </option>
+
+
+            <option value="Melding">
+                Melding
+            </option>
+
+
+            <option value="Werkzaamheden">
+                Werkzaamheden
+            </option>
+
+
+            <option value="Overig">
+                Overig
+            </option>
+
+        </select>
+
+
+        <!-- NAAM -->
+
+        <label for="naam">
+            Naam
+        </label>
+
+
+        <input
+            type="text"
+            id="naam"
+            name="naam"
+            required
+        >
+
+
+        <!-- OPMERKINGEN -->
+
+        <label for="opmerkingen">
+            Opmerkingen
+        </label>
+
+
+        <textarea
+            id="opmerkingen"
+            name="opmerkingen"
+            rows="5"
+        ></textarea>
+
+
+        <!-- VERSTUREN -->
+
+        <button
+            type="submit"
+            id="submitButton"
+        >
+
+            Versturen en locatie opslaan
+
+        </button>
+
+
+    </form>
+
+
+    <!-- STATUS -->
+
+    <div id="status"></div>
+
+
+    <!-- GPS INFORMATIE -->
+
+    <div id="gpsInfo"></div>
+
+
+</div>
+
+
+<script src="script.js"></script>
+
 
 </body>
 
