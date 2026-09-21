@@ -55,56 +55,25 @@
                 Kies een type
             </option>
 
-
-            <option value="Nesten zoeken (WV)">
-                Nesten zoeken (WV)
+            <option value="Controle">
+                Controle
             </option>
 
-
-            <option value="Nestcontrole (WV)">
-                Nestcontrole (WV)
+            <option value="Bezoek">
+                Bezoek
             </option>
-
-
-            <option value="Reekalveren">
-                Reekalveren
-            </option>
-
-
-            <option value="Faunascan">
-                Faunascan
-            </option>
-
-
-            <option value="PV inspectie">
-                PV inspectie
-            </option>
-
-
-            <option value="Thermische inspectie">
-                Thermische inspectie
-            </option>
-
 
             <option value="Inspectie">
                 Inspectie
             </option>
 
-
-            <option value="Metingen">
-                Metingen
+            <option value="Melding">
+                Melding
             </option>
 
-
-            <option value="Controle">
-                Controle
+            <option value="Werkzaamheden">
+                Werkzaamheden
             </option>
-
-
-            <option value="Test">
-                Test
-            </option>
-
 
             <option value="Overig">
                 Overig
@@ -138,7 +107,7 @@
         <textarea
             id="opmerkingen"
             name="opmerkingen"
-            rows="5"
+            rows="3"
         ></textarea>
 
 
@@ -149,7 +118,15 @@
             id="submitButton"
         >
 
-            Versturen en locatie opslaan
+            <span id="buttonText">
+                Versturen en locatie opslaan
+            </span>
+
+            <span
+                id="loadingSpinner"
+                class="spinner"
+                aria-hidden="true"
+            ></span>
 
         </button>
 
