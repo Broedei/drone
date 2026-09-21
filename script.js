@@ -2,9 +2,6 @@
 ========================================================
   GOOGLE APPS SCRIPT URL
 ========================================================
-
-  PLAK HIER JE BESTAANDE /exec URL
-
 */
 
 const API_URL =
@@ -39,6 +36,60 @@ const submitButton =
     document.getElementById(
         "submitButton"
     );
+
+
+const buttonText =
+    document.getElementById(
+        "buttonText"
+    );
+
+
+const loadingSpinner =
+    document.getElementById(
+        "loadingSpinner"
+    );
+
+
+/*
+========================================================
+  LAADINDICATOR AAN
+========================================================
+*/
+
+function startLoading() {
+
+    submitButton.disabled =
+        true;
+
+    buttonText.textContent =
+        "Bezig met opslaan...";
+
+    loadingSpinner.classList.add(
+        "active"
+    );
+
+}
+
+
+/*
+========================================================
+  LAADINDICATOR UIT
+========================================================
+*/
+
+function stopLoading() {
+
+    submitButton.disabled =
+        false;
+
+    buttonText.textContent =
+        "Versturen en locatie opslaan";
+
+    loadingSpinner.classList.remove(
+        "active"
+    );
+
+}
 
 
 /*
@@ -91,7 +142,7 @@ form.addEventListener(
 
         /*
         ----------------------------------------
-        Controle type
+        Controle type registratie
         ----------------------------------------
         */
 
@@ -140,14 +191,19 @@ form.addEventListener(
 
 
         /*
-        ----------------------------------------
-        Interface aanpassen
-        ----------------------------------------
+        ========================================
+        LAADINDICATOR STARTEN
+        ========================================
         */
 
-        submitButton.disabled =
-            true;
+        startLoading();
 
+
+        /*
+        ----------------------------------------
+        Oude meldingen wissen
+        ----------------------------------------
+        */
 
         status.textContent =
             "📍 Locatie wordt bepaald...";
@@ -158,9 +214,9 @@ form.addEventListener(
 
 
         /*
-        ----------------------------------------
+        ========================================
         GPS OPHALEN
-        ----------------------------------------
+        ========================================
         */
 
         navigator.geolocation.getCurrentPosition(
@@ -223,26 +279,20 @@ form.addEventListener(
 
                 const gegevens = {
 
-
                     naam:
                         naam,
-
 
                     opmerkingen:
                         opmerkingen,
 
-
                     typeRegistratie:
                         typeRegistratie,
-
 
                     latitude:
                         latitude,
 
-
                     longitude:
                         longitude,
-
 
                     accuracy:
                         accuracyRounded
@@ -265,14 +315,12 @@ form.addEventListener(
                         method:
                             "POST",
 
-
                         headers: {
 
                             "Content-Type":
                                 "text/plain;charset=utf-8"
 
                         },
-
 
                         body:
                             JSON.stringify(
@@ -330,12 +378,11 @@ form.addEventListener(
 
                         /*
                         --------------------------------
-                        Knop opnieuw activeren
+                        LAADINDICATOR STOPPEN
                         --------------------------------
                         */
 
-                        submitButton.disabled =
-                            false;
+                        stopLoading();
 
                     }
                 )
@@ -357,11 +404,16 @@ form.addEventListener(
 
 
                         status.textContent =
-                            "❌ De gegevens konden niet worden opgeslagen.";
+                            "❌ De gegevens konden niet worden opgeslagen. Probeer opnieuw.";
 
 
-                        submitButton.disabled =
-                            false;
+                        /*
+                        --------------------------------
+                        LAADINDICATOR STOPPEN
+                        --------------------------------
+                        */
+
+                        stopLoading();
 
                     }
                 );
@@ -440,8 +492,13 @@ form.addEventListener(
                     melding;
 
 
-                submitButton.disabled =
-                    false;
+                /*
+                ----------------------------------------
+                LAADINDICATOR STOPPEN
+                ----------------------------------------
+                */
+
+                stopLoading();
 
             },
 
@@ -454,25 +511,11 @@ form.addEventListener(
 
             {
 
-                /*
-                Zo nauwkeurig mogelijk
-                */
-
                 enableHighAccuracy:
                     true,
 
-
-                /*
-                Maximaal 20 seconden wachten
-                */
-
                 timeout:
                     20000,
-
-
-                /*
-                Geen oude GPS-positie gebruiken
-                */
 
                 maximumAge:
                     0
