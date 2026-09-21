@@ -116,10 +116,6 @@ select {
    TYPE REGISTRATIE
    ========================================= */
 
-/*
-   Zelfde hoogte als het naamveld.
-*/
-
 #typeRegistratie {
     width: 100%;
 
@@ -152,10 +148,6 @@ select:focus {
 /* =========================================
    OPMERKINGEN
    ========================================= */
-
-/*
-   Ongeveer de helft van de vorige hoogte.
-*/
 
 textarea {
     height: 60px;
@@ -196,6 +188,19 @@ button {
     border-radius: 8px;
 
     cursor: pointer;
+
+    /*
+       Zorgt ervoor dat tekst en spinner
+       netjes naast elkaar staan.
+    */
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 10px;
 }
 
 
@@ -217,7 +222,55 @@ button:disabled {
 
     cursor: not-allowed;
 
-    opacity: 0.7;
+    opacity: 0.8;
+}
+
+
+/* =========================================
+   LAADINDICATOR
+   ========================================= */
+
+.spinner {
+    display: none;
+
+    width: 20px;
+
+    height: 20px;
+
+    border: 3px solid rgba(255, 255, 255, 0.4);
+
+    border-top-color: #ffffff;
+
+    border-radius: 50%;
+
+    animation:
+        spin 0.8s linear infinite;
+}
+
+
+/* =========================================
+   LAADINDICATOR ACTIEF
+   ========================================= */
+
+.spinner.active {
+    display: inline-block;
+}
+
+
+/* =========================================
+   ANIMATIE
+   ========================================= */
+
+@keyframes spin {
+
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+
 }
 
 
@@ -297,21 +350,12 @@ button:disabled {
     }
 
 
-    /*
-       Type registratie blijft
-       even hoog als Naam.
-    */
-
     #typeRegistratie {
         height: 49px;
 
         font-size: 17px;
     }
 
-
-    /*
-       Opmerkingen blijft compact.
-    */
 
     textarea {
         height: 60px;
